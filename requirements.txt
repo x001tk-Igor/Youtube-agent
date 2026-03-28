@@ -1,0 +1,42 @@
+# ============================================================
+# YouTube AI Agent — Зависимости
+# ============================================================
+# Перед запуском установите системные зависимости:
+# 
+# macOS:     brew install ffmpeg
+# Ubuntu:    sudo apt install ffmpeg
+# Windows:   Скачайте с https://ffmpeg.org/download.html
+# ============================================================
+
+# === LLM ===
+ollama>=0.3.0
+
+# === YouTube ===
+yt-dlp>=2024.0.0
+youtube-transcript-api>=0.6.0
+
+# === Transcription ===
+faster-whisper>=1.0.0
+torch>=2.0.0
+torchaudio>=2.0.0
+
+# === Vector Search ===
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+
+# === Utilities ===
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+requests>=2.30.0
+
+# === PDF Export ===
+reportlab>=4.0.0
+
+# === Markdown ===
+markdown>=3.5.0
+
+# === Fast Model Download (опционально) ===
+hf_xet>=1.0.0
+
+# === System ===
+psutil>=5.9.0  # Для мониторинга процессов
