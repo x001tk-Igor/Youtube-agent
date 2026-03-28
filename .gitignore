@@ -1,0 +1,56 @@
+# ============================================================
+# YouTube AI Agent — .gitignore
+# ============================================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Виртуальные окружения
+env/
+venv/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Проект (не загружаем на GitHub)
+storage/
+*.mp3
+*.wav
+*.ogg
+*.flac
+*.pdf
+.env
+*.log
+
+# Временные файлы
+*.tmp
+*.temp
+.cache/
