@@ -15,7 +15,7 @@ class LLMEngine:
         # Ollama уже должен быть запущен через OllamaManager
         print_status(f"Подключение к LLM ({self.model})...", "🤖")
     
-    def generate(self, prompt: str, max_tokens: int = 2048) -> str:
+    def generate(self, prompt: str, max_tokens: int = 4096) -> str:
         """Генерирует ответ от LLM"""
         print_status("Отправка запроса к нейросети...", "💭")
         print(f"  📊 Размер промпта: {len(prompt)} символов")
@@ -35,7 +35,7 @@ class LLMEngine:
                     }
                 ],
                 options={
-                    'temperature': 0.3,
+                    'temperature': 0.5,
                     'num_predict': max_tokens
                 },
                 stream=True

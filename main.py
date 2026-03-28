@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+YouTube AI Agent — Главная точка входа
+Интерактивный диалоговый режим для анализа видео и каналов
+"""
 
 import sys
 import atexit
@@ -60,6 +64,7 @@ def print_system_info():
         print(f"  Ollama: ❌ Не подключён")
     
     print(f"  Модель: {config.LLM_MODEL}")
+    print(f"  Детализация: {'✅ Включена' if config.DETAILED_MODE else '❌ Выключена'}")
     print("=" * 70 + "\n")
 
 def get_url() -> str:
@@ -74,7 +79,25 @@ def get_url() -> str:
             continue
         return url
 
-def get_task() -> str:
+def get_detail_level() -> str:
+    """Запрашивает уровень детализации"""
+    print("\n📏 Какой уровень детализации нужен?")
+    print("   1) Кратко — основные моменты (1-2 минуты чтения)")
+    print("   2) Стандартно — подробно (3-5 минут чтения)")
+    print("   3) Максимально — максимально подробно (5-10 минут чтения)")
+    
+    while True:
+        choice = input("   > ").strip()
+        if choice in ["1", "кратко", "brief"]:
+            return "brief"
+        elif choice in ["2", "стандартно", "standard", ""]:
+            return "standard"
+        elif choice in ["3", "максимально", "макс", "detailed"]:
+            return "detailed"
+        else:
+            print("   ❌ Выберите 1, 2 или 3")
+
+def get_task(detail_level: str) -> str:
     """Запрашивает задачу у пользователя"""
     print("\n📝 Какая задача? (опиши своими словами)")
     print("   Примеры:")
@@ -86,12 +109,19 @@ def get_task() -> str:
     
     task = input("   > ").strip()
     
-    if not task:
-        task = "Сделай краткое содержание видео, выдели главные моменты"
-        print(f"   ℹ️  Используется задача по умолчанию: {task}\n")
-    else:
-        print()
+    # Добавляем инструкцию по детализации к задаче
+    detail_instructions = {
+        "brief": "Ответь кратко, только самое главное, без деталей.",
+        "standard": "Ответь подробно, с деталями и примерами.",
+        "detailed": "Ответь МАКСИМАЛЬНО подробно, раскрой все аспекты, цитируй видео, пиши минимум 800-1500 слов."
+    }
     
+    if task:
+        task = f"{task} {detail_instructions[detail_level]}"
+    else:
+        task = f"Сделай подробное содержание видео, выдели главные моменты. {detail_instructions[detail_level]}"
+    
+    print()
     return task
 
 def get_save_format() -> str:
@@ -115,19 +145,19 @@ def get_save_format() -> str:
         else:
             print("   ❌ Выберите 1, 2, 3 или 4")
 
-def process_video(url: str, task: str) -> str:
+def process_video(url: str, task: str, detail_level: str) -> str:
     """Обрабатывает одно видео"""
-    summarizer = VideoSummarizer()
+    summarizer = VideoSummarizer(detail_level=detail_level)
     result = summarizer.process(url, task)
     return result
 
-def process_channel(url: str, task: str) -> str:
+def process_channel(url: str, task: str, detail_level: str) -> str:
     """Обрабатывает весь канал"""
     print("\n📺 Обработка канала...")
     print("   ⚠️  Это может занять время (зависит от количества видео)")
     print()
     
-    searcher = ChannelSearcher()
+    searcher = ChannelSearcher(detail_level=detail_level)
     videos = searcher.get_channel_videos(url)
     print(f"   Найдено видео: {len(videos)}")
     print()
@@ -163,15 +193,16 @@ def main():
         
         # === ОСНОВНОЙ ЦИКЛ ===
         url = get_url()
-        task = get_task()
+        detail_level = get_detail_level()
+        task = get_task(detail_level)
         is_channel = is_channel_url(url)
         
         if is_channel:
             print_status("Обнаружена ссылка на КАНАЛ", "📺")
-            result = process_channel(url, task)
+            result = process_channel(url, task, detail_level)
         else:
             print_status("Обнаружена ссылка на ВИДЕО", "🎬")
-            result = process_video(url, task)
+            result = process_video(url, task, detail_level)
         
         # === ВЫВОД РЕЗУЛЬТАТА ===
         print("\n" + "=" * 70)
